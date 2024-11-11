@@ -7,6 +7,7 @@ export interface IUser {
   lastName: string;
   role: string;
   uid: string;
+  reftoken?: string;
 }
 const userSchema: Schema<IUser> = new Schema(
   {
@@ -16,6 +17,7 @@ const userSchema: Schema<IUser> = new Schema(
     lastName: { type: String, required: true },
     role: { type: String, required: true },
     uid: { type: String, required: true },
+    reftoken: { type: String },
   },
   {
     timestamps: true,

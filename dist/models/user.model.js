@@ -8,5 +8,9 @@ const userSchema = new mongoose_1.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     role: { type: String, required: true },
+    uid: { type: String, required: true },
+    reftoken: { type: String },
+}, {
+    timestamps: true,
 });
 exports.User = (0, mongoose_1.model)("User", userSchema);
