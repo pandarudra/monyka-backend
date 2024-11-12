@@ -4,7 +4,11 @@ import { v4 as genid } from "uuid";
 import { compare, hash } from "../utils/hash";
 import { genRefreshToken, genToken, verifyRefreshToken } from "../utils/auth";
 
-export const signup = async (req: Request, res: Response): Promise<any> => {
+export const signup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
   const { email, password, firstName, lastName, role } = req.body;
   try {
     const alreadyExists = await User.findOne({ email });
@@ -22,13 +26,17 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
     user.reftoken = genRefreshToken(user);
     await user.save();
     const token = genToken(user);
-    return res.status(201).json({ token, user });
+    return res.status(201).json({ token, reftoken: user.reftoken });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<any> => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -44,7 +52,7 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     await user.save();
     return res.status(200).json({ token, user });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -67,7 +75,11 @@ export const refreshToken = async (
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<any> => {
+export const logout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
   const { reftoken } = req.body;
   try {
     const decoded: any = verifyRefreshToken(reftoken);
@@ -79,6 +91,6 @@ export const logout = async (req: Request, res: Response): Promise<any> => {
     await user.save();
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
